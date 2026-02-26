@@ -1,7 +1,7 @@
 // amplify/functions/workflow-runner/src/services/pineconeService.ts
 import { Pinecone } from '@pinecone-database/pinecone';
 import { Logger } from '@aws-lambda-powertools/logger';
-import { loadSettings } from '../../../shared/settingsClient';
+import { loadSettings } from "@platform/shared/settingsClient";
 
 const logger = new Logger({ serviceName: 'pinecone-service' });
 

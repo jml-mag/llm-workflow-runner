@@ -5,9 +5,9 @@ import { Tracer } from "@aws-lambda-powertools/tracer";
 import { BedrockRuntimeClient, InvokeModelCommand } from "@aws-sdk/client-bedrock-runtime";
 
 import type { State, NodeConfig } from "../types";
-import type { Schema } from "../../../../data/resource";
+import type { Schema } from "@platform/data/resource";
 import { PineconeService } from "../services/pineconeService";
-import { loadSettings } from "../../../shared/settingsClient";
+import { loadSettings } from "@platform/shared/settingsClient";
 import { logProgressForOwners } from "../utils/progress";
 
 // Ensure explicit service name to avoid 'service_undefined' logs

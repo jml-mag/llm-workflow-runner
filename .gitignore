@@ -1,3 +1,4 @@
 getCode.py
 *.txt
 .env
+node_modules/

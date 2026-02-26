@@ -1,5 +1,5 @@
 // amplify/functions/workflow-runner/src/prompt/memory.ts
-import type { Schema } from "../../../../data/resource";
+import type { Schema } from "@platform/data/resource";
 import { Logger } from "@aws-lambda-powertools/logger";
 
 const logger = new Logger({ serviceName: "PromptEngine.Memory" });

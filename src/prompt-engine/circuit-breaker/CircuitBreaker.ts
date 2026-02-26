@@ -2,7 +2,7 @@
 import { Logger } from "@aws-lambda-powertools/logger";
 import { Metrics, MetricUnit } from "@aws-lambda-powertools/metrics";
 import { randomUUID } from "crypto";
-import type { Schema } from "../../../../../data/resource";
+import type { Schema } from "@platform/data/resource";
 
 const logger = new Logger({ serviceName: "PromptEngine.CircuitBreaker" });
 const metrics = new Metrics({ serviceName: "PromptEngine.CircuitBreaker" });

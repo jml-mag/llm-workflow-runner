@@ -1,7 +1,7 @@
 // amplify/functions/workflow-runner/src/prompt/index.ts
 import type { State } from "../types";
 import type { ModelCapability } from "../modelCapabilities";
-import type { Schema } from "../../../../data/resource";
+import type { Schema } from "@platform/data/resource";
 import { fetchConversationMemory } from "./memory";
 import { formatMessages } from "./formatters";
 import { truncateToFitContextWindow } from "./utils";

@@ -4,7 +4,7 @@ import { Metrics, MetricUnit } from "@aws-lambda-powertools/metrics";
 import { Tracer } from "@aws-lambda-powertools/tracer";
 
 import type { State, NodeConfig } from "../types";
-import type { Schema } from "../../../../data/resource";
+import type { Schema } from "@platform/data/resource";
 import { PineconeService, type PineconeVector } from "../services/pineconeService";
 import { logProgressForOwners } from "../utils/progress";
 

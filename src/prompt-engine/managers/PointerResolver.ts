@@ -1,6 +1,6 @@
 // amplify/functions/workflow-runner/src/prompt-engine/managers/PointerResolver.ts
 import { Logger } from "@aws-lambda-powertools/logger";
-import type { Schema } from "../../../../../data/resource";
+import type { Schema } from "@platform/data/resource";
 
 const logger = new Logger({ serviceName: "PromptEngine.PointerResolver" });
 

@@ -17,7 +17,7 @@ import { handleIntentClassifier } from "./nodes/IntentClassifier";
 import type { State } from "./types";
 
 // ✅ FIXED: Use correct relative path
-import type { Schema } from "../../../data/resource";
+import type { Schema } from "@platform/data/resource";
 
 // ✅ Use proper Amplify data client type with Schema
 type DataClient = ReturnType<typeof import("aws-amplify/data").generateClient<Schema>>;

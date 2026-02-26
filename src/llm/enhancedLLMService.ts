@@ -5,12 +5,12 @@ import { createHash } from 'crypto';
 import { createModelClient } from '../services/modelSelector';
 import { getModelById } from '../modelCapabilities';
 import PromptBuilder, { createPromptOptionsFromState } from '../utils/PromptBuilder';
-import { LLMResponseWrapper, wrapSuccess, wrapError } from '../../../utils/LLMResponseWrapper';
+import { LLMResponseWrapper, wrapSuccess, wrapError } from "@platform/utils/LLMResponseWrapper";
 import { archivePromptToS3, toLines } from "../utils/promptArchiver";
 import { logProgressForOwners } from '../utils/progress'; // Import shared helper
-import type { BaseLLMResponse } from '../../../utils/LLMResponseWrapper';
+import type { BaseLLMResponse } from "@platform/utils/LLMResponseWrapper";
 import type { State } from '../types';
-import type { Schema } from '../../../../data/resource';
+import type { Schema } from "@platform/data/resource";
 
 const logger = new Logger({ serviceName: 'EnhancedLLMService' });
 const metrics = new Metrics({ serviceName: 'EnhancedLLMService' });

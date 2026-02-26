@@ -1,12 +1,12 @@
 // amplify/functions/workflow-runner/src/utils/PromptEngineAdapter.ts
-import type { Schema } from "../../../../data/resource";
+import type { Schema } from "@platform/data/resource";
 import type { State } from "../types";
 import type { ModelCapability } from "../modelCapabilities";
 import { PromptEngine } from "../prompt-engine/core/index";
 import { generateClient } from "aws-amplify/data";
 import { Logger } from "@aws-lambda-powertools/logger";
 import { Tracer } from "@aws-lambda-powertools/tracer";
-import { safePutAnnotation } from "../../../utils/tracing";
+import { safePutAnnotation } from "@platform/utils/tracing";
 
 const logger = new Logger({ serviceName: "PromptEngineAdapter" });
 const tracer = new Tracer({ serviceName: "PromptEngineAdapter" });

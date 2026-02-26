@@ -3,7 +3,7 @@ import { Logger } from "@aws-lambda-powertools/logger";
 import { Metrics, MetricUnit } from "@aws-lambda-powertools/metrics";
 import { S3Client, PutObjectCommand, GetObjectCommand, DeleteObjectCommand } from "@aws-sdk/client-s3";
 import { createHash } from "crypto";
-import type { Schema } from "../../../../../data/resource";
+import type { Schema } from "@platform/data/resource";
 import type { BasePromptVersion } from "./PointerResolver";
 
 const logger = new Logger({ serviceName: "PromptEngine.ContentManager" });

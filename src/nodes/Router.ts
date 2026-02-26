@@ -4,7 +4,7 @@ import { Logger } from "@aws-lambda-powertools/logger";
 import { Metrics, MetricUnit } from "@aws-lambda-powertools/metrics";
 import { Tracer } from "@aws-lambda-powertools/tracer";
 import type { State, NodeConfig } from "../types";
-import type { Schema } from "../../../../data/resource";
+import type { Schema } from "@platform/data/resource";
 import { logProgressForOwners } from "../utils/progress";
 
 const logger = new Logger({ serviceName: "Router" });

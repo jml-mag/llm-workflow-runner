@@ -14,7 +14,7 @@ import {
 } from "./types";
 
 // ✅ FIXED: Use correct relative path
-import type { Schema } from "../../../data/resource";
+import type { Schema } from "@platform/data/resource";
 // ✅ NEW: Import slot state utilities
 import { loadSlotState } from "./utils/slotState";
 

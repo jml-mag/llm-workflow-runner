@@ -3,8 +3,8 @@ import { Logger } from "@aws-lambda-powertools/logger";
 import { Metrics, MetricUnit } from "@aws-lambda-powertools/metrics";
 import { Tracer } from "@aws-lambda-powertools/tracer";
 import type { State } from "../types";
-import type { Schema } from "../../../../data/resource";
-import { LLMResponseWrapper } from "../../../utils/LLMResponseWrapper";
+import type { Schema } from "@platform/data/resource";
+import { LLMResponseWrapper } from "@platform/utils/LLMResponseWrapper";
 import { logProgressForOwners } from "../utils/progress";
 
 // Ensure explicit service name to avoid 'service_undefined' logs

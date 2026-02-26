@@ -1,6 +1,6 @@
 // amplify/functions/workflow-runner/src/utils/slotState.ts
 
-import type { Schema } from "../../../../data/resource";
+import type { Schema } from "@platform/data/resource";
 
 type DataClient = ReturnType<typeof import("aws-amplify/data").generateClient<Schema>>;
 
