@@ -1,9 +1,5 @@
 // amplify/functions/workflow-runner/src/workflowRunnerHandler.ts
-import { Amplify } from "aws-amplify";
-import { generateClient } from "aws-amplify/data";
-import { getAmplifyDataClientConfig } from "@aws-amplify/backend/function/runtime";
-import { env } from "$amplify/env/workflowRunnerHandler";
-import type { Schema } from "../../../data/resource";
+import { createDataClient, type DataClient } from "./adapters/dataClient";
 import { Logger } from "@aws-lambda-powertools/logger";
 import { Tracer } from "@aws-lambda-powertools/tracer";
 import { Metrics, MetricUnit } from "@aws-lambda-powertools/metrics";
@@ -43,9 +39,6 @@ interface WorkflowRunnerEvent {
   /** Optional explicit owners list set by the API handler; if provided, this wins */
   ownersForProgress?: string[];
 }
-
-// Helper type for data client
-type DataClient = ReturnType<typeof generateClient<Schema>>;
 
 // A small helper type for the query result shape we need
 type DocumentsByCollectionResult = {
@@ -186,10 +179,8 @@ export const handler = async (event: WorkflowRunnerEvent) => {
   const userPrompt = event.userPrompt ?? "";
 
   try {
-    // Configure Amplify Data client (IAM-signed in Lambda)
-    const { resourceConfig, libraryOptions } = await getAmplifyDataClientConfig(env);
-    Amplify.configure(resourceConfig, libraryOptions);
-    const dataClient = generateClient<Schema>();
+    // Initialise Amplify Data client via adapter (IAM-signed in Lambda)
+    const dataClient = await createDataClient();
 
     // Sanity-check models we rely on
     const required = [
