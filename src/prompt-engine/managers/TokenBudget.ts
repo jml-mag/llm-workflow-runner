@@ -2,6 +2,11 @@
 import { Logger } from "@aws-lambda-powertools/logger";
 import { Metrics, MetricUnit } from "@aws-lambda-powertools/metrics";
 import type { ModelCapability } from "../../modelCapabilities";
+import {
+  DEFAULT_REQUEST_COST_CAP_USD,
+  DEFAULT_TOKEN_CAP,
+  EMERGENCY_COST_THRESHOLD_USD,
+} from "../../config/env";
 
 const logger = new Logger({ serviceName: "PromptEngine.TokenBudget" });
 const metrics = new Metrics({ serviceName: "PromptEngine.TokenBudget" });
@@ -21,53 +26,82 @@ export interface BudgetResult {
 }
 
 /**
- * Token budget manager with enterprise cost controls
- * Enforces per-request spending limits and emergency thresholds
+ * Token budget manager with enterprise cost controls.
+ * Enforces per-request spending limits and emergency thresholds.
+ *
+ * Cost caps are driven by environment config (see src/config/env.ts).
+ * Per-model overrides can be supplied via the constructor; the defaults
+ * below are illustrative starting points — tune them for your deployment.
  */
 export class TokenBudget {
-  private readonly costCaps: Record<string, CostCapConfig> = {
-    'gpt-4o': { 
-      maxCostPerRequest: 10.0, 
-      maxTokensPerRequest: 50000, 
-      emergencyStopThreshold: 50.0 
-    },
-    'us.anthropic.claude-3-7-sonnet-20250219-v1:0': { 
-      maxCostPerRequest: 8.0, 
-      maxTokensPerRequest: 100000, 
-      emergencyStopThreshold: 40.0 
-    },
-    'anthropic.claude-3-7-sonnet-20250219-v1:0': { 
-      maxCostPerRequest: 8.0, 
-      maxTokensPerRequest: 100000, 
-      emergencyStopThreshold: 40.0 
-    },
-    'us.amazon.nova-pro-v1:0': { 
-      maxCostPerRequest: 3.0, 
-      maxTokensPerRequest: 150000, 
-      emergencyStopThreshold: 15.0 
-    },
-    'amazon.nova-pro-v1:0': { 
-      maxCostPerRequest: 3.0, 
-      maxTokensPerRequest: 150000, 
-      emergencyStopThreshold: 15.0 
-    },
-    'us.meta.llama4-maverick-17b-instruct-v1:0': { 
-      maxCostPerRequest: 2.0, 
-      maxTokensPerRequest: 200000, 
-      emergencyStopThreshold: 10.0 
-    },
-    'meta.llama4-maverick-17b-instruct-v1:0': { 
-      maxCostPerRequest: 2.0, 
-      maxTokensPerRequest: 200000, 
-      emergencyStopThreshold: 10.0 
-    },
-  };
+  /**
+   * Per-model cost cap overrides.
+   * Values here are illustrative defaults scaled relative to each model's
+   * pricing tier. Override via constructor or environment config.
+   */
+  private readonly costCaps: Record<string, CostCapConfig>;
 
-  private readonly DEFAULT_COST_CAP: CostCapConfig = {
-    maxCostPerRequest: 5.0,
-    maxTokensPerRequest: 100000,
-    emergencyStopThreshold: 25.0
-  };
+  private readonly DEFAULT_COST_CAP: CostCapConfig;
+
+  constructor(overrides?: Record<string, Partial<CostCapConfig>>) {
+    // Build default cap from environment / config
+    this.DEFAULT_COST_CAP = {
+      maxCostPerRequest: DEFAULT_REQUEST_COST_CAP_USD,
+      maxTokensPerRequest: DEFAULT_TOKEN_CAP,
+      emergencyStopThreshold: EMERGENCY_COST_THRESHOLD_USD,
+    };
+
+    // Illustrative per-model caps scaled relative to the global default.
+    // These are starting points — adjust to match your spending policy.
+    const baseCaps: Record<string, CostCapConfig> = {
+      'gpt-4o': {
+        maxCostPerRequest: DEFAULT_REQUEST_COST_CAP_USD * 2,
+        maxTokensPerRequest: 50000,
+        emergencyStopThreshold: EMERGENCY_COST_THRESHOLD_USD * 2,
+      },
+      'us.anthropic.claude-3-7-sonnet-20250219-v1:0': {
+        maxCostPerRequest: DEFAULT_REQUEST_COST_CAP_USD * 1.6,
+        maxTokensPerRequest: DEFAULT_TOKEN_CAP,
+        emergencyStopThreshold: EMERGENCY_COST_THRESHOLD_USD * 1.6,
+      },
+      'anthropic.claude-3-7-sonnet-20250219-v1:0': {
+        maxCostPerRequest: DEFAULT_REQUEST_COST_CAP_USD * 1.6,
+        maxTokensPerRequest: DEFAULT_TOKEN_CAP,
+        emergencyStopThreshold: EMERGENCY_COST_THRESHOLD_USD * 1.6,
+      },
+      'us.amazon.nova-pro-v1:0': {
+        maxCostPerRequest: DEFAULT_REQUEST_COST_CAP_USD * 0.6,
+        maxTokensPerRequest: 150000,
+        emergencyStopThreshold: EMERGENCY_COST_THRESHOLD_USD * 0.6,
+      },
+      'amazon.nova-pro-v1:0': {
+        maxCostPerRequest: DEFAULT_REQUEST_COST_CAP_USD * 0.6,
+        maxTokensPerRequest: 150000,
+        emergencyStopThreshold: EMERGENCY_COST_THRESHOLD_USD * 0.6,
+      },
+      'us.meta.llama4-maverick-17b-instruct-v1:0': {
+        maxCostPerRequest: DEFAULT_REQUEST_COST_CAP_USD * 0.4,
+        maxTokensPerRequest: 200000,
+        emergencyStopThreshold: EMERGENCY_COST_THRESHOLD_USD * 0.4,
+      },
+      'meta.llama4-maverick-17b-instruct-v1:0': {
+        maxCostPerRequest: DEFAULT_REQUEST_COST_CAP_USD * 0.4,
+        maxTokensPerRequest: 200000,
+        emergencyStopThreshold: EMERGENCY_COST_THRESHOLD_USD * 0.4,
+      },
+    };
+
+    // Merge any caller-supplied overrides
+    this.costCaps = baseCaps;
+    if (overrides) {
+      for (const [modelId, partial] of Object.entries(overrides)) {
+        this.costCaps[modelId] = {
+          ...(this.costCaps[modelId] ?? this.DEFAULT_COST_CAP),
+          ...partial,
+        };
+      }
+    }
+  }
 
   /**
    * Enforce budget constraints and calculate costs

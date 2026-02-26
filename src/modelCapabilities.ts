@@ -148,6 +148,11 @@ export interface ApiModelIds {
   };
 }
 
+/**
+ * Pricing values below reflect publicly listed vendor rates as of Feb 2025.
+ * They are included for educational / estimation purposes — check each
+ * provider's pricing page for current numbers before production use.
+ */
 export const MODEL_REGISTRY: Record<string, ModelCapability> = {
   /** GPT-4 Omni (OpenAI API only, no Bedrock) */
   'gpt-4o': {
