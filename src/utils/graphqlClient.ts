@@ -73,8 +73,9 @@ export async function executeGraphQL(query: string, variables: Record<string, un
       throw new Error(`GraphQL request failed: ${response.status} ${response.statusText}`);
     }
 
-    const result = await response.json();
-    
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const result = (await response.json()) as Record<string, any>;
+
     if (result.errors) {
       console.error("GraphQL errors:", result.errors);
       throw new Error(`GraphQL errors: ${JSON.stringify(result.errors)}`);

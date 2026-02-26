@@ -39,6 +39,7 @@ export async function createModelClient(
   const provider = model?.provider;
 
   if (provider === "openai") {
+    // @ts-expect-error — ChatOpenAI constructor triggers excessively deep type instantiation in LangChain generics
     return new ChatOpenAI({
       apiKey: process.env.OPENAI_API_KEY!,
       model: modelId,              // ✅ FIXED: Added model parameter
